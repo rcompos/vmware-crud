@@ -1,0 +1,55 @@
+---
+# Create range of VMware VMs
+ 
+- name: Role Facts
+  set_fact:
+    vm_state:   poweredon
+    start:      0
+    end:        0
+
+- name: Apply vmware_guest for range of VMs 
+  vmware_guest:
+    hostname:       "{{ vcenter_ip }}"
+    username:       "{{ vcenter_username }}"
+    password:       "{{ vcenter_password }}"
+    cluster :       "{{ vcenter_cluster }}"
+    validate_certs: False
+    folder:         "{{ vm_folder }}"
+    name:           "{{ vm_name }}-{{ item }}"
+    datacenter:     "{{ vcenter_datacenter }}"
+    template:       "{{ vcenter_template }}"
+    resource_pool:  "{{ vcenter_resource_pool }}"
+    state:          "{{ vm_state }}"
+    networks:       "{{ vm_networks }}"
+    hardware:       "{{ vm_hardware }}"
+    disk:           "{{ vm_disk }}"
+  delegate_to:      localhost
+  with_sequence:    "{{ start }}-{{ end }}"
+  when:             end > 0
+  register:         output_single
+
+- debug: var=output_single
+  when:  end > 0
+
+- name: Apply vmware_guest for single VM
+  vmware_guest:
+    hostname:       "{{ vcenter_ip }}"
+    username:       "{{ vcenter_username }}"
+    password:       "{{ vcenter_password }}"
+    cluster :       "{{ vcenter_cluster }}"
+    validate_certs: False
+    folder:         "{{ vm_folder }}"
+    name:           "{{ vm_name }}"
+    datacenter:     "{{ vcenter_datacenter }}"
+    template:       "{{ vcenter_template }}"
+    resource_pool:  "{{ vcenter_resource_pool }}"
+    state:          "{{ vm_state }}"
+    networks:       "{{ vm_networks }}"
+    hardware:       "{{ vm_hardware }}"
+    disk:           "{{ vm_disk }}"
+  delegate_to:      localhost
+  when:             end == 0
+  register:         output_range
+
+- debug: var=output_range
+  when:  end == 0

@@ -1,0 +1,10 @@
+- name: Rename a virtual machine (requires the virtual machine's uuid)
+  vmware_guest:
+    hostname: "{{ vcenter_ip }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    validate_certs: False
+    uuid: "{{ vm_uuid }}"
+    name: new_name
+    state: present
+  delegate_to: localhost

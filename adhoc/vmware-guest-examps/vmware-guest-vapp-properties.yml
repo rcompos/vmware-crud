@@ -1,0 +1,16 @@
+- name: Manipulate vApp properties
+  vmware_guest:
+    hostname: "{{ vcenter_ip }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    validate_certs: False
+    name: vm_name
+    state: present
+    vapp_properties:
+      - id: remoteIP
+        category: Backup
+        label: Backup server IP
+        type: string
+        value: 10.10.10.1
+      - id: old_property
+        operation: remove

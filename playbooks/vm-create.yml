@@ -1,0 +1,8 @@
+---
+
+- name: VM Create Play
+  hosts: coreinfra-crud-inv
+  serial: 1
+  gather_facts: false
+  roles:
+    - vm-create

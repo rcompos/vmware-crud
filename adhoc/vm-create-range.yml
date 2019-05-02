@@ -1,0 +1,61 @@
+---
+# Create VMware virtual machine - simplest case
+
+- hosts: coreinfra-crud
+  vars:
+   start:                  1
+   end:                    1
+   vm_state:  	           poweredon
+#   vm_state:  	           poweredon
+#   #esxi_hostname:          poesxp1521.one.den.solidfire.net
+#   vcenter_cluster:        01:SF-ProdOps
+#   vcenter_ip:             10.117.28.10
+#   vcenter_username:       ronald.compos
+#   vcenter_password:       "{{ vcenter_pw }}"
+#   vcenter_template:       DevOps_Ubuntu_16.04_Infra_Template_v1.0 - itemtv0002
+#   vcenter_datacenter:     DEN
+#   vcenter_resource_pool:  DevOps  
+#   vcenter_network_name:   Lab Pool-MGMT-1065
+#   vm_folder:              /DEN/vm/01:SF-ProdOps/DevOps/Infra
+#   disk1_size_gb:          100
+#   disk1_datastore:        SF-ProdOps
+  connection: local
+
+  tasks:
+
+  - name: Create a VMware virtual machine from a template
+    vmware_guest:
+      hostname:       "{{ vcenter_ip }}"
+      username:       "{{ vcenter_username }}"
+      password:       "{{ vcenter_password }}"
+      #esxi_hostname:  "{{ esxi_hostname }}"
+      cluster :       "{{ vcenter_cluster }}"
+      validate_certs: False
+      folder:         "{{ vm_folder }}"
+      name:           "{{ vm_name }}{{ item }}"
+      datacenter:     "{{ vcenter_datacenter }}"
+      template:       "{{ vcenter_template }}"
+      resource_pool:  "{{ vcenter_resource_pool }}"
+      disk:
+        - size_gb: "{{ disk1_size_gb }}"
+          type: thin
+          datastore: "{{ disk1_datastore }}"
+        - size_gb: "{{ disk2_size_gb }}"
+          type: thin
+          datastore: "{{ disk2_datastore }}"
+        - size_gb: "{{ disk3_size_gb }}"
+          type: thin
+          datastore: "{{ disk3_datastore }}"
+      networks:
+        - name: "{{ vcenter_network_name }}"
+      state:          "{{ state }}"
+      hardware:
+        memory_mb: "{{ hw_memory_mb }}"
+        num_cpus:  "{{ hw_num_cpus }}"
+    delegate_to: localhost
+    with_sequence: "{{ start }}-{{ end }}"
+    register: create_vm
+
+  - debug: var=create_vm
+
+...

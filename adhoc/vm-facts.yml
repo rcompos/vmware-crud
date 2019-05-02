@@ -1,0 +1,32 @@
+---
+# Create VMWare ESX virtual machines
+#
+
+- hosts: localhost
+  vars:
+    vcenter_ip:         10.117.28.10
+    vcenter_username:   ronald.compos
+    vcenter_password:   "{{ vcenter_pw }}"
+    vcenter_template:   DevOps Infra 16.04 LTS Template v1.0
+    vcenter_datacenter: DEN
+    vm_name:            do-nitro-1
+    vm_folder:          /DEN/vm/01:SF-ProdOps/DevOps/Infra
+  connection: local
+
+  tasks:
+
+  - name: Get vm facts 
+    vmware_guest_facts:
+      hostname:   "{{ vcenter_ip }}"
+      username:   "{{ vcenter_username }}"
+      password:   "{{ vcenter_password }}"
+      datacenter: "{{ vcenter_datacenter }}"
+      folder:     "{{ vm_folder }}"
+      name:       "{{ vm_name }}"
+      validate_certs: no
+    delegate_to: localhost
+    register: vmfacts
+
+  - debug: var=vmfacts
+
+...

@@ -1,0 +1,8 @@
+---
+
+- name: VM Fact Play
+  hosts: coreinfra-crud-inv
+  serial: 1
+  gather_facts: false
+  roles:
+    - vm-facts

@@ -1,0 +1,41 @@
+---
+# Get facts for VMware VMs
+
+- name: Role Facts
+  set_fact:
+    start: 0
+    end:   0
+
+- name: Get facts for range of VMs
+  vmware_guest_facts:
+    hostname:       "{{ vcenter_ip }}"
+    username:       "{{ vcenter_username }}"
+    password:       "{{ vcenter_password }}"
+    datacenter:     "{{ vcenter_datacenter }}"
+    folder:         "{{ vm_folder }}"
+    name:           "{{ vm_name }}-{{ item }}"
+    validate_certs: no
+  delegate_to:      localhost
+  with_sequence:    "{{ start }}-{{ end }}"
+  when:             end > 0
+  register:         vmfacts
+
+- debug: var=vmfacts
+  when:  end > 0
+
+- name: Get facts for single VM
+  vmware_guest_facts:
+    hostname:       "{{ vcenter_ip }}"
+    username:       "{{ vcenter_username }}"
+    password:       "{{ vcenter_password }}"
+    datacenter:     "{{ vcenter_datacenter }}"
+    folder:         "{{ vm_folder }}"
+    name:           "{{ vm_name }}"
+    validate_certs: no
+  delegate_to:      localhost
+  when:             end == 0
+  register:         vmfacts
+
+- debug: var=vmfacts
+  when:  end == 0
+...

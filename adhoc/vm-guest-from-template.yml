@@ -1,0 +1,73 @@
+---
+# Create VMWare ESX virtual machines
+#
+
+- hosts: all
+  vars:
+    esxi_hostname:       poesxp1521.one.den.solidfire.net
+    vcenter_ip:          10.117.28.10
+    vcenter_username:    ronald.compos
+    vcenter_password:    "{{ vcenter_pw }}"
+    vcenter_template:    DevOps_Ubuntu_16.04_Infra_Template_v1.0 - itemtv0002
+    vcenter_datacenter:  DEN
+    vm_name:             do-seven-0
+    vm_folder:           /DEN/vm/01:SF-ProdOps/DevOps/Infra
+    disk1_size_gb:       100
+    disk1_datastore:     Milkbone-den-esxi-prodops-DS1
+    disk2_size_gb:       32 
+    disk2_datastore:     Milkbone-den-esxi-prodops-DS1
+    disk3_size_gb:       32
+    disk3_datastore:     Milkbone-den-esxi-prodops-DS1
+  connection: local
+
+  tasks:
+
+  - name: Create a VMware virtual machine from a template
+    vmware_guest:
+      hostname:        "{{ vcenter_ip }}"
+      username:        "{{ vcenter_username }}"
+      password:        "{{ vcenter_password }}"
+      esxi_hostname:   "{{ esxi_hostname }}"
+      validate_certs:  False
+      folder:          "{{ vm_folder }}"
+      name:            "{{ vm_name }}"
+      datacenter:      "{{ vcenter_datacenter }}"
+      template:        "{{ vcenter_template }}"
+      disk:
+        - size_gb:     "{{ disk1_size_gb }}"
+          type:        thin
+          datastore:   "{{ disk1_datastore }}"
+        - size_gb:     "{{ disk2_size_gb }}"
+          type:        thin
+          datastore:   "{{ disk2_datastore }}"
+        - size_gb:     "{{ disk3_size_gb }}"
+          type:        thin
+          datastore:   "{{ disk3_datastore }}"
+      state:           absent
+      #hardware:
+      #  memory_mb:                 4096
+      #  num_cpus:                  4
+      #  num_cpu_cores_per_socket:  3
+      #  scsi: paravirtual
+      #  memory_reservation:        512
+      #  memory_reservation_lock:   True
+      #  mem_limit:                 8096
+      #  mem_reservation:           4096
+      #  cpu_limit:                 8096
+      #  cpu_reservation:           4096
+      #  max_connections:           5
+      #  hotadd_cpu:                True
+      #  hotremove_cpu:             True
+      #  hotadd_memory:             False
+      #  version:                   12
+      #cdrom:
+      #  type:                      iso
+      #  iso_path:                  [datastore1] livecd.iso
+      #networks:
+      #- name:                      VM Network
+      #  mac:                       aa:bb:dd:aa:00:14
+      #wait_for_ip_address:         yes
+    delegate_to:       localhost
+    register:          deploy
+
+...

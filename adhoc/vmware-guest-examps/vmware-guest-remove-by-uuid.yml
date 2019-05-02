@@ -1,0 +1,9 @@
+- name: Remove a virtual machine by uuid
+  vmware_guest:
+    hostname: "{{ vcenter_ip }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    validate_certs: False
+    uuid: "{{ vm_uuid }}"
+    state: absent
+  delegate_to: localhost

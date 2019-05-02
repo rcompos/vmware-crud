@@ -1,0 +1,30 @@
+---
+# VMWare ESX virtual machines
+# Get disk facts
+
+- hosts: all
+  vars:
+    vcenter_ip:          10.117.28.10
+    vcenter_username:    ronald.compos
+    vcenter_password:    "{{ vcenter_pw }}"
+    vcenter_template:    DevOps Infra 16.04 LTS Template v1.0
+    vcenter_datacenter:  DEN
+    vm_name:             do-nitro-1
+    vm_folder:           /DEN/vm/01:SF-ProdOps/DevOps/Infra
+  connection:            local
+
+  tasks:
+
+  - name: Gather disk facts from virtual machine using name
+    vmware_guest_disk_facts:
+      hostname:        "{{ vcenter_ip }}"
+      username:        "{{ vcenter_username }}"
+      password:        "{{ vcenter_password }}"
+      datacenter:      "{{ vcenter_datacenter }}"
+      validate_certs:  no
+      name:            "{{ vm_name }}"
+      #uuid:            421e4592-c069-924d-ce20-7e7533fab926
+    delegate_to:       localhost
+    register:          disk_facts
+  
+  - debug: var=disk_facts

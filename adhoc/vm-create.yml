@@ -1,0 +1,34 @@
+---
+# Create VMware virtual machine - simplest case
+
+- hosts: localhost
+  vars:
+    esxi_hostname:       poesxp1521.one.den.solidfire.net
+    vcenter_ip:          10.117.28.10
+    vcenter_username:    ronald.compos
+    vcenter_password:    "{{ vcenter_pw }}"
+    vcenter_template:    DevOps_Ubuntu_16.04_Infra_Template_v1.0 - itemtv0002
+    vcenter_datacenter:  DEN
+    vm_name:             do-seven-0
+    vm_state:  	         poweredon
+    vm_folder:           /DEN/vm/01:SF-ProdOps/DevOps/Infra
+  connection: local
+
+  tasks:
+
+  - name: Create a VMware virtual machine from a template
+    vmware_guest:
+      hostname:       "{{ vcenter_ip }}"
+      username:       "{{ vcenter_username }}"
+      password:       "{{ vcenter_password }}"
+      esxi_hostname:  "{{ esxi_hostname }}"
+      validate_certs: False
+      folder:         "{{ vm_folder }}"
+      name:           "{{ vm_name }}"
+      datacenter:     "{{ vcenter_datacenter }}"
+      template:       "{{ vcenter_template }}"
+      state:          "{{ vm_state }}"
+    delegate_to: localhost
+    register: deploy
+
+...

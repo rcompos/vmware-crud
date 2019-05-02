@@ -1,0 +1,39 @@
+---
+# Create VMWare ESX virtual machines
+#
+
+- hosts: all
+  vars:
+    vc_ip :              10.117.28.10
+    vc_username:         ronald.compos
+    vc_password:         "{{ vcenter_pw }}"
+    vm_name:             do-seven-1
+    #vc_uuid:             "{{ vcenter_uuid }}"
+    vm_folder:           /DEN/vm/01:SF-ProdOps/DevOps/Infra
+    vcenter_datacenter:  DEN
+  gather_facts:          no
+  connection:            local
+
+  tasks:
+
+  - name: Prompt to continue
+    pause:
+      #prompt: "WARNING!! Delete machine with UUID {{ vc_uuid }}. Press return to continue"
+      prompt: "WARNING!! Delete machine with name {{ vm_name }}. Press return to continue"
+
+  - name: Remove a virtual machine
+    vmware_guest:
+      hostname:        "{{ vc_ip }}"
+      username:        "{{ vc_username }}"
+      password:        "{{ vc_password }}"
+      validate_certs:  False
+      folder:          "{{ vm_folder }}"
+      datacenter:      "{{ vcenter_datacenter }}"
+      #uuid:            "{{ vc_uuid }}"
+      name:            "{{ vm_name }}"
+      #state:           absent
+      state:           present
+    delegate_to:       localhost
+    register:          facts
+
+  - debug: var=facts

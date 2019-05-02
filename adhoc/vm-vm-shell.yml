@@ -1,0 +1,38 @@
+---
+# VMWare ESX virtual machines
+# Run command in vm
+
+- hosts: all
+  vars:
+    vcenter_ip:         10.117.28.10
+    vcenter_username:   ronald.compos
+    vcenter_password:   "{{ vcenter_pw }}"
+    vcenter_template:   DevOps Infra 16.04 LTS Template v1.0
+    vcenter_datacenter: DEN
+    vm_name:            do-nitro-1
+    vm_folder:          /DEN/vm/01:SF-ProdOps/DevOps/Infra
+  connection:           local
+
+  tasks:
+
+  - name: Run command inside a vm
+    vmware_vm_shell:
+      hostname:         "{{ vcenter_ip }}"
+      username:         "{{ vcenter_username }}"
+      password:         "{{ vcenter_password }}"
+      folder:           "{{ vm_folder }}"
+      datacenter:       "{{ vcenter_datacenter }}"
+      vm_id:            "{{ vm_name }}"
+      vm_username:      solidfire
+      vm_password:      solidfire
+      validate_certs:   no
+      vm_shell:         /bin/echo
+      vm_shell_args:    " $var >> myFile "
+      vm_shell_env:
+        - "PATH=/bin"
+        - "VAR=test"
+      vm_shell_cwd:     /tmp
+    delegate_to:        localhost
+    register:           shell_command_output
+
+  - debug: var=shell_command_output

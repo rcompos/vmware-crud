@@ -1,0 +1,9 @@
+# Solidfire VMware servers
+
+[coreinfra-crud-inv]
+# Fictitious host for ansible vmware-guest module
+vmware-crud
+
+[ci-k8s-ubu-3disk:children]
+coreinfra-crud-inv
+

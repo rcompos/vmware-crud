@@ -1,0 +1,28 @@
+---
+# Create VMWare ESX virtual machines
+#
+
+- hosts: all
+  vars:
+    vcenter_ip:          10.117.28.10
+    vcenter_username:    ronald.compos
+    vcenter_password:    "{{ vcenter_pw }}"
+    vcenter_datacenter:  DEN
+    vm_folder:           /DEN/vm/01:SF-ProdOps/DevOps/Infra
+    vm_name:             do-seven-0
+  connection:            local
+
+  tasks:
+
+  - name: Set powerstate of a virtual machine to poweroff by using UUID
+    vmware_guest:
+      hostname:         "{{ vcenter_ip }}"
+      username:         "{{ vcenter_username }}"
+      password:         "{{ vcenter_password }}"
+      folder:           "{{ vm_folder }}"
+      datacenter:       "{{ vcenter_datacenter }}"
+      validate_certs:   False
+      #uuid:            "{{ vc_uuid }}"
+      name:             "{{ vm_name }}"
+      state:            poweredoff
+    delegate_to:        localhost
